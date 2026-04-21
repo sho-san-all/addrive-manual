@@ -20,10 +20,11 @@ export interface SidebarCategory {
 const CATEGORY_CONFIG: Record<string, { label: string; emoji: string; order: number }> = {
   "getting-started": { label: "はじめに", emoji: "🚀", order: 0 },
   dashboard: { label: "ダッシュボード", emoji: "📊", order: 1 },
-  projects: { label: "案件管理", emoji: "📁", order: 2 },
-  settings: { label: "設定", emoji: "⚙️", order: 3 },
-  workflow: { label: "業務別ガイド", emoji: "💡", order: 4 },
-  faq: { label: "FAQ", emoji: "❓", order: 5 },
+  frontend: { label: "フロント向けガイド", emoji: "👤", order: 2 },
+  projects: { label: "案件管理", emoji: "📁", order: 3 },
+  settings: { label: "設定", emoji: "⚙️", order: 4 },
+  workflow: { label: "業務別ガイド", emoji: "💡", order: 5 },
+  faq: { label: "FAQ", emoji: "❓", order: 6 },
 };
 
 export function getSidebar(): SidebarCategory[] {
