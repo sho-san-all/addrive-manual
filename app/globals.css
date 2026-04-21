@@ -1,0 +1,58 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+:root {
+  --sidebar-width: 256px;
+  --toc-width: 224px;
+  --header-height: 56px;
+}
+
+@theme inline {
+  --font-sans: ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", "Menlo", monospace;
+}
+
+body {
+  background: #fff;
+  color: #111827;
+  font-family: var(--font-sans);
+}
+
+/* Sidebar scrollbar */
+.sidebar-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background: #e5e7eb;
+  border-radius: 2px;
+}
+
+/* Search modal backdrop */
+.search-backdrop {
+  backdrop-filter: blur(2px);
+}
+
+/* Active nav item */
+.nav-active {
+  background-color: #f3f4f6;
+  color: #111827;
+  font-weight: 500;
+}
+
+/* Prose overrides for article content */
+.article-prose {
+  --tw-prose-body: #374151;
+  --tw-prose-headings: #111827;
+  --tw-prose-code: #6d28d9;
+  --tw-prose-pre-bg: #1e293b;
+}
+
+.article-prose h2 {
+  scroll-margin-top: calc(var(--header-height) + 24px);
+}
+.article-prose h3 {
+  scroll-margin-top: calc(var(--header-height) + 24px);
+}
