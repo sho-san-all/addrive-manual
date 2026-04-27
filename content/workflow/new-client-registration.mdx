@@ -1,0 +1,202 @@
+---
+title: 新規クライアント登録方法
+category: 業務別ガイド
+description: 新しいクライアントで広告配信した際にAd Driveで数値を表示するまでの手順マニュアル。DataBeat登録〜クライアントページ作成まで。
+updated: 2026-04-27
+aliases: ["新規クライアント", "新規登録", "DataBeat登録", "クライアント登録", "新しい案件"]
+---
+
+> 📍 この機能は **DataBeat** と **[Ad Drive 設定ページ](https://shosan-ad-drive.com/settings/campaign-select-settings)** にあります
+
+## 概要
+
+**新しいクライアント**で広告配信をした際の、Ad Driveで数値を表示するための手順マニュアルです。
+
+- 作業時間目安：**15分**
+- 数値が更新されるまで：**1時間〜最大6時間**
+
+<Callout icon="💡">
+Ad Driveで数値を見たい日の前日までに余裕を持って作業をするのがおすすめです。
+</Callout>
+
+---
+
+## 1. DataBeatに登録する
+
+### 1-1. SQLを作成する
+
+<Callout icon="📌">
+まずは下記のURLにアクセスしてログインします。
+
+- URL: [https://www.data-be.at/promotions](https://www.data-be.at/promotions)
+- メールアドレス: `info@sho-san-mk.com`
+- パスワード: `B6T~b+G(CR|J7u559eyc`
+</Callout>
+
+#### Meta広告のSQL作成方法
+
+SQLを生成して指定シートに貼り付けることがゴールです。
+
+<Callout icon="⚠️">
+**【注意点5つ　※必ず確認！】**
+
+**1. プロモーション二重登録に注意！**
+プロモーションで、**すでに同じクライアントのプロモーションが作成されていないか**、新規で作成する前に必ず確認を。作成がダブったら面倒なことになります。
+
+**2. プロモーション > アカウント設定 でアカウント間違いに注意！**
+プロモーション作成時に、「アカウント設定」で選ぶアカウントは、**広告を実際に配信する広告マネージャーを選ぶ**。
+ここを間違えるとAd Driveに数値は反映されません。
+※SHO-SAN1、SHO-SAN2、SHO-SAN3、先方のアカウントなどのことです。
+
+**3. プロモーションの設定に注意！**
+プロモーション > 月次設定 > キャンペーン設定 で、**「すべて」を追加してはいけません**。
+必ず、**Meta広告側でキャンペーン名に入れる "クライアント名"** を入力します。
+Meta広告側でキャンペーンを作成するときは、入力したクライアント名を Meta広告側の **"キャンペーン名"に常に入れる**。
+※Meta広告の場合のみ。例外としてGoogle広告はすべてでOK。
+</Callout>
+
+#### Google広告のSQL作成方法
+
+Google広告はクライアントごとのアカウントなので、まずはアカウントを登録します。
+
+アカウント番号は赤枠のところにあります。
+
+![Google広告アカウント番号の場所](/images/new-client-registration/01-google-account-number.png)
+
+<Callout icon="⚠️">
+**【注意点】**
+
+- プロモーション名の命名規則は **「会社名｜Google」**
+- BIツール名の命名規則は **「会社名｜広告DB｜Google」**
+- **SQLを貼り付けるシート**は[こちらのシートのN列](https://docs.google.com/spreadsheets/d/1YWaxInCsXCQ0nZ-lNolb-sySE07bWVK-V3jvLtJ_QFU/edit?gid=185469534#gid=185469534)
+- SQLをそのまま貼ると一行目に空白ができるので、**空白は必ず削除**してください
+</Callout>
+
+---
+
+### 1-2. SQLを貼り付ける
+
+[管理シート](https://docs.google.com/spreadsheets/d/1YWaxInCsXCQ0nZ-lNolb-sySE07bWVK-V3jvLtJ_QFU/edit?gid=185469534#gid=185469534)に、新しいクライアントの名前を **最終行に追加** します。
+
+<Callout icon="⚠️">
+**このシートに書くクライアント名は正式名称で！！！**
+（Ad Drive側での表示名はあとから変更できます）
+</Callout>
+
+| 媒体 | 貼り付け先の列 |
+| --- | --- |
+| Meta広告のSQL | M列 |
+| Google広告のSQL | L列 |
+
+<Callout icon="⚠️">
+**生成したSQLの貼り付け時の注意！**
+SQLをそのまま貼ると一行目に空白ができるので、**一行目の空白は必ず削除**してください。
+</Callout>
+
+DataBeatで作成したプロモーションは、作成が確定（ステータスが ✅ になる）するまで **30分〜1時間** ほどかかります。
+
+赤枠の「ステータス」が ✅ になったあとに、**0時 / 6時 / 12時 / 18時 を過ぎれば数値が上がってきて、ここでの手順は完了** です。
+
+![DataBeatのステータス確認画面](/images/new-client-registration/02-databeat-status.png)
+
+<Callout icon="💡">
+待っている間に **次のステップに進んで同時進行してOK** です。
+</Callout>
+
+---
+
+## 2. Ad Driveで項目設定する
+
+<Callout icon="📌">
+下記のURLにアクセスし、自分のGoogleアカウントでログインします。
+
+[https://shosan-ad-drive.com/settings/campaign-select-settings](https://shosan-ad-drive.com/settings/campaign-select-settings)
+
+※ログインができない、ページアクセス許可がない場合はULに連絡してください。
+</Callout>
+
+**手順:**
+
+1. 「**クライアント名**」のタブに移動
+2. group > 「クライアント名」を選択
+3. [SQLを貼り付けたシート](https://docs.google.com/spreadsheets/d/1YWaxInCsXCQ0nZ-lNolb-sySE07bWVK-V3jvLtJ_QFU/edit?gid=185469534#gid=185469534)に書いたクライアント名と **一字一句同じクライアント名** を入力して追加
+
+<Callout icon="⚠️">
+**※一字一句同じクライアント名にすることは超大事です！！！**
+</Callout>
+
+![クライアント名追加画面](/images/new-client-registration/03-client-name-add.png)
+
+---
+
+## 3. Ad Driveでキャンペーン登録をする
+
+下記マニュアルを参考に、配信しているキャンペーンの登録をしておきます。
+
+<Callout icon="💡">
+[キャンペーン登録・編集方法](/docs/workflow/campaign-registration)
+</Callout>
+
+<Callout icon="💡">
+まだ配信がスタートしていないキャンペーンでも、**公開さえしていれば先行してキャンペーン登録をしておいてOK** です。
+
+ただし、**1円でも消化されてからでないとAd Driveでは見えません。**
+</Callout>
+
+---
+
+## 4. Ad Driveでクライアントページを作成する
+
+<Callout icon="💡">
+**3のキャンペーン登録を行ってから** 作成してください。
+</Callout>
+
+**手順:**
+
+1. [クライアント設定ページ](https://shosan-ad-drive.com/settings/client-settings) にアクセス
+2. 「新しいクライアントを登録」 > クライアント名 をクリックすると **名前候補が挙がっている** ので選択する
+3. **必要情報をすべて入力** して保存する
+
+<Callout icon="⚠️">
+棟数セグメント、注力度などどれを選んでいいかわからない場合は **空欄のままにせず** 必ず **UL もしくはフロントに確認** して入力してください。
+</Callout>
+
+<Callout icon="⚠️">
+**クライアントIDは必ず英字にしてください！！（超大事）**
+
+例:
+- 株式会社リベスト ⇒ `livebest`
+- 大賀建設株式会社 ⇒ `taigakensetsu`
+
+この文字列がそのままURLになり、**クライアントにも見える** ので恥ずかしくない英字変換で！！！
+</Callout>
+
+![クライアントページ作成画面](/images/new-client-registration/04-client-page-create.png)
+
+---
+
+## 5. Ad Driveでクライアントページを確認
+
+クライアント情報が登録できたら、以下のページの一覧に出現します。
+
+**CLビュー / 社内ビューのリンクが自動発行** されます。
+
+<Callout icon="📌">
+**クライアント別ページ一覧**
+
+[https://shosan-ad-drive.com/allclient](https://shosan-ad-drive.com/allclient)
+</Callout>
+
+<Callout icon="💡">
+**CLビュー / 社内ビューでキャンペーン情報が見れない場合**
+
+- [3のキャンペーン登録](#3-ad-driveでキャンペーン登録をする)の情報が間違っている
+- [1. DataBeatに登録する](#1-databeatに登録する)の準備が完了していない
+</Callout>
+
+---
+
+## 関連記事
+
+- [キャンペーン登録・編集方法](/docs/workflow/campaign-registration)
+- [担当が変わったらやること](/docs/workflow/staff-handover)
