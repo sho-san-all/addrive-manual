@@ -21,10 +21,9 @@ const CATEGORY_CONFIG: Record<string, { label: string; emoji: string; order: num
   "getting-started": { label: "はじめに", emoji: "🚀", order: 0 },
   dashboard: { label: "ダッシュボード", emoji: "📊", order: 1 },
   frontend: { label: "フロント向けガイド", emoji: "👤", order: 2 },
-  projects: { label: "案件管理", emoji: "📁", order: 3 },
-  settings: { label: "設定", emoji: "⚙️", order: 4 },
-  workflow: { label: "業務別ガイド", emoji: "💡", order: 5 },
-  faq: { label: "FAQ", emoji: "❓", order: 6 },
+  workflow: { label: "マーケ向けガイド", emoji: "💡", order: 3 },
+  admin: { label: "管理者向けガイド", emoji: "🛠️", order: 4 },
+  faq: { label: "FAQ", emoji: "❓", order: 5 },
 };
 
 export function getSidebar(): SidebarCategory[] {
