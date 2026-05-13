@@ -1,6 +1,7 @@
 import { getAllArticles } from "@/lib/content";
 import { getSidebar } from "@/lib/sidebar";
 import CategoryCard from "@/components/CategoryCard";
+import HeroSearchTrigger from "@/components/HeroSearchTrigger";
 import Link from "next/link";
 
 export default function HomePage() {
@@ -17,24 +18,7 @@ export default function HomePage() {
         <p className="text-gray-500 mb-8">
           機能の使い方・操作手順を素早く検索できます
         </p>
-        <div className="flex justify-center">
-          <div className="inline-flex items-center gap-3 px-6 py-3 text-gray-400 bg-gray-100 rounded-xl text-sm w-full max-w-md cursor-pointer hover:bg-gray-200 transition-colors">
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-            <span className="flex-1 text-left">キーワードで検索... (⌘K)</span>
-          </div>
-        </div>
+        <HeroSearchTrigger />
       </div>
 
       {/* Category cards */}
