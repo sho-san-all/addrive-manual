@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build && npx pagefind --site out",
+    "build": "next build && npx pagefind --site out && node -e \"const fs=require('fs');const path=require('path');const src=path.join('out','pagefind');const dst=path.join('.vercel','output','static','pagefind');if(fs.existsSync(path.join('.vercel','output','static'))){fs.cpSync(src,dst,{recursive:true});console.log('Copied pagefind to',dst);}else{console.log('Skip pagefind copy (no .vercel/output/static)');}\"",
     "start": "next start"
   },
   "dependencies": {
