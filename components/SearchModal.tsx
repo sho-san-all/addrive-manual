@@ -35,13 +35,18 @@ export default function SearchModal({
     if (open) {
       setTimeout(() => inputRef.current?.focus(), 50);
       if (!window.pagefind) {
-        const script = document.createElement("script");
-        script.src = "/pagefind/pagefind.js";
-        script.onload = () => setPagefindReady(true);
-        script.onerror = () => {
-          /* pagefind not built yet */
-        };
-        document.head.appendChild(script);
+        (async () => {
+          try {
+            const pagefindUrl = "/pagefind/pagefind.js";
+            const pf = await Function(
+              `return import("${pagefindUrl}")`
+            )();
+            window.pagefind = pf;
+            setPagefindReady(true);
+          } catch {
+            /* pagefind not built yet */
+          }
+        })();
       } else {
         setPagefindReady(true);
       }
