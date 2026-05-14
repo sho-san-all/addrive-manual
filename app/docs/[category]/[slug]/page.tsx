@@ -35,19 +35,30 @@ export default async function ArticlePage({ params }: Props) {
     <div className="flex">
       {/* Article content */}
       <div className="flex-1 min-w-0 xl:mr-56">
-        <article className="max-w-3xl mx-auto px-6 py-10">
+        <article
+          className="max-w-3xl mx-auto px-6 py-10"
+          data-pagefind-body
+        >
           {/* Breadcrumb */}
-          <nav className="text-xs text-gray-400 mb-6 flex items-center gap-1.5">
+          <nav
+            className="text-xs text-gray-400 mb-6 flex items-center gap-1.5"
+            data-pagefind-ignore
+          >
             <span>{meta.category}</span>
             <span>/</span>
             <span className="text-gray-600">{meta.title}</span>
           </nav>
 
           {/* Title */}
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">{meta.title}</h1>
+          <h1
+            className="text-2xl font-bold text-gray-900 mb-2"
+            data-pagefind-meta="title"
+          >
+            {meta.title}
+          </h1>
 
           {meta.updated && (
-            <p className="text-xs text-gray-400 mb-8">
+            <p className="text-xs text-gray-400 mb-8" data-pagefind-ignore>
               更新日: {meta.updated}
             </p>
           )}
@@ -66,7 +77,10 @@ export default async function ArticlePage({ params }: Props) {
           </div>
 
           {/* Footer feedback */}
-          <div className="mt-12 pt-6 border-t border-gray-100 flex items-center justify-between text-sm text-gray-400">
+          <div
+            className="mt-12 pt-6 border-t border-gray-100 flex items-center justify-between text-sm text-gray-400"
+            data-pagefind-ignore
+          >
             <span>この記事は役に立ちましたか？</span>
             <div className="flex gap-2">
               <button className="px-3 py-1 rounded border border-gray-200 hover:bg-gray-50 transition-colors">
