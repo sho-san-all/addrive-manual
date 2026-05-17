@@ -41,6 +41,8 @@ aliases: ["トラブル", "困ったとき", "ログインできない", "数値
 - group を「担当者」「クライアント名」「フロント」など切り替えて **追加** する
 - 担当者名・フロント名を追加するときは、**姓と名の間に半角スペース（全角不可）** を必ず入れる
 
+![選択項目の検索・追加画面](/images/troubleshooting/01-selection-items.png)
+
 ### 2. キャンペーン登録から、自分の担当している広告キャンペーンを登録する
 
 1. [キャンペーン登録ページ](https://shosan-ad-drive.com/campaigns_register) を開く
@@ -74,6 +76,8 @@ aliases: ["トラブル", "困ったとき", "ログインできない", "数値
 > - それでも出てこなければ、**毎日6時、12時、15時、18時、0時に数値更新がある** のでその波を待つ
 > - それでも出てこなければ、Slackチャンネルで **`@addrive_pj`** メンションで連絡
 
+![メンバー設定 - 新規登録画面](/images/troubleshooting/02-member-settings.png)
+
 1〜3すべて完了すると、[担当者横断ビュー](https://shosan-ad-drive.com/my-drive/all) の自分の名前が **青く表示** され、**マイページが自動生成** されます。
 
 ---
@@ -85,6 +89,8 @@ aliases: ["トラブル", "困ったとき", "ログインできない", "数値
 > 📨 **何でもいいのでフィルターをかけてから** CSV一括登録するとサクサク動きます。
 >
 > 自分の名前でフィルターしておき、そのまま **ブラウザのお気に入りに登録しておくのがおすすめ** です。
+
+![CSV一括登録時のフィルター画面](/images/troubleshooting/03-csv-filter.png)
 
 ---
 
@@ -117,6 +123,11 @@ aliases: ["トラブル", "困ったとき", "ログインできない", "数値
 - **キャンペーンID、広告セットID** は合っているか、半角数字で **余計なスペースなどが含まれていないか**
 - **配信月、配信開始日、配信終了日** は正しいか
 
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
+  <img src="/images/troubleshooting/04-campaign-info-1.png" alt="キャンペーン登録情報の確認ポイント1" />
+  <img src="/images/troubleshooting/05-campaign-info-2.png" alt="キャンペーン登録情報の確認ポイント2" />
+</div>
+
 ### 2. コンバージョン数がずれる場合：日次コンバージョン入力画面のエラー確認
 
 キャンペーンごとの **日次コンバージョン入力画面でエラーが出ていないか** 確認してください。
@@ -138,6 +149,8 @@ aliases: ["トラブル", "困ったとき", "ログインできない", "数値
 - **クライアント名はあるけどSQLが空** ⇒ [初期設定（新規クライアント登録）](/docs/workflow/new-client-registration) がやりかけの可能性あり
 - **クライアント名すらない** ⇒ まずは [初期設定（新規クライアント登録）](/docs/workflow/new-client-registration) を実施
   - 確率はかなり低いですがSQLを貼り間違えている可能性もあり
+
+![管理シートのSQL貼り付け状況](/images/troubleshooting/06-management-sheet.png)
 
 ### 4. DataBeatの設定が正しいか
 
