@@ -5,6 +5,18 @@ import rehypeSlug from "rehype-slug";
 import { generateAllStaticParams, getArticleFile } from "@/lib/content";
 import { extractToc } from "@/lib/toc";
 import TOC from "@/components/TOC";
+import { Callout } from "@/components/Callout";
+import { ZoomableImage } from "@/components/ZoomableImage";
+
+const mdxComponents = {
+  Callout,
+  img: (props: React.ImgHTMLAttributes<HTMLImageElement>) => (
+    <ZoomableImage
+      src={typeof props.src === "string" ? props.src : undefined}
+      alt={props.alt}
+    />
+  ),
+};
 
 export async function generateStaticParams() {
   return generateAllStaticParams();
@@ -67,6 +79,7 @@ export default async function ArticlePage({ params }: Props) {
           <div className="prose prose-gray max-w-none article-prose">
             <MDXRemote
               source={article.rawContent}
+              components={mdxComponents}
               options={{
                 mdxOptions: {
                   remarkPlugins: [remarkGfm],
