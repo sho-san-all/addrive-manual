@@ -7,9 +7,11 @@ import { extractToc } from "@/lib/toc";
 import TOC from "@/components/TOC";
 import { Callout } from "@/components/Callout";
 import { ZoomableImage } from "@/components/ZoomableImage";
+import { AnchorHeading } from "@/components/AnchorHeading";
 
 const mdxComponents = {
   Callout,
+  h2: AnchorHeading,
   img: (props: React.ImgHTMLAttributes<HTMLImageElement>) => (
     <ZoomableImage
       src={typeof props.src === "string" ? props.src : undefined}
