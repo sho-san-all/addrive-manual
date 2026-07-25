@@ -10,6 +10,13 @@ export const metadata: Metadata = {
     template: "%s | AdDrive マニュアル",
   },
   description: "AdDrive 社内マニュアル - 機能の使い方と逆引きガイド",
+  // 社内限定コンテンツ（実クライアント名が写ったスクリーンショットを含む）のため、
+  // 検索エンジンへのインデックス登録とリンク追跡を全ページで拒否する。
+  // 子ページの generateMetadata は title のみ返すため、この robots 設定は継承される。
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function RootLayout({
