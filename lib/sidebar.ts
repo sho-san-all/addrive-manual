@@ -18,13 +18,12 @@ export interface SidebarCategory {
 }
 
 const CATEGORY_CONFIG: Record<string, { label: string; emoji: string; order: number }> = {
-  "getting-started": { label: "はじめに", emoji: "🚀", order: 0 },
-  dashboard: { label: "ダッシュボード", emoji: "📊", order: 1 },
-  frontend: { label: "フロント向けガイド", emoji: "👤", order: 2 },
-  workflow: { label: "マーケ向けガイド", emoji: "💡", order: 3 },
-  admin: { label: "管理者向けガイド", emoji: "🛠️", order: 4 },
+  start: { label: "はじめに", emoji: "🚀", order: 0 },
+  view: { label: "数値を見る・分析する", emoji: "📊", order: 1 },
+  setup: { label: "案件を通す", emoji: "🔧", order: 2 },
+  report: { label: "レポートを出す", emoji: "📄", order: 3 },
+  help: { label: "困ったとき・小ワザ", emoji: "❓", order: 4 },
   updates: { label: "アップデート情報", emoji: "🆕", order: 5 },
-  faq: { label: "FAQ", emoji: "❓", order: 6 },
 };
 
 export function getSidebar(): SidebarCategory[] {

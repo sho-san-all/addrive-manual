@@ -1,3 +1,25 @@
 {
-  "buildCommand": "npm run build"
+  "buildCommand": "npm run build",
+  "redirects": [
+    { "source": "/docs/getting-started/overview(/)?", "destination": "/docs/start/overview/", "permanent": true },
+    { "source": "/docs/frontend/usage-guide(/)?", "destination": "/docs/view/my-drive/", "permanent": true },
+    { "source": "/docs/dashboard/metrics(/)?", "destination": "/docs/view/metrics/", "permanent": true },
+    { "source": "/docs/dashboard/overview(/)?", "destination": "/docs/view/metrics/", "permanent": true },
+    { "source": "/docs/workflow/ad-expert-chan(/)?", "destination": "/docs/view/ad-expert-chan/", "permanent": true },
+    { "source": "/docs/workflow/new-client-registration(/)?", "destination": "/docs/setup/new-client/", "permanent": true },
+    { "source": "/docs/workflow/campaign-registration(/)?", "destination": "/docs/setup/campaign/", "permanent": true },
+    { "source": "/docs/workflow/staff-handover(/)?", "destination": "/docs/setup/handover/", "permanent": true },
+    { "source": "/docs/workflow/shirai-dolphin(/)?", "destination": "/docs/setup/w-check-dolphin/", "permanent": true },
+    { "source": "/docs/workflow/report-creation(/)?", "destination": "/docs/report/creation/", "permanent": true },
+    { "source": "/docs/faq/troubleshooting(/)?", "destination": "/docs/help/index/", "permanent": true },
+    { "source": "/docs/faq/data-issues(/)?", "destination": "/docs/help/data-issues/", "permanent": true },
+    { "source": "/docs/faq/tips(/)?", "destination": "/docs/help/tips/", "permanent": true },
+    { "source": "/docs/admin/overview(/)?", "destination": "/docs/start/overview/", "permanent": true },
+    { "source": "/docs/getting-started(/)?", "destination": "/docs/start/", "permanent": true },
+    { "source": "/docs/frontend(/)?", "destination": "/docs/view/", "permanent": true },
+    { "source": "/docs/dashboard(/)?", "destination": "/docs/view/", "permanent": true },
+    { "source": "/docs/workflow(/)?", "destination": "/docs/setup/", "permanent": true },
+    { "source": "/docs/faq(/)?", "destination": "/docs/help/", "permanent": true },
+    { "source": "/docs/admin(/)?", "destination": "/docs/start/", "permanent": true }
+  ]
 }
