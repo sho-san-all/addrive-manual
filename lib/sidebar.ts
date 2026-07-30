@@ -23,7 +23,8 @@ const CATEGORY_CONFIG: Record<string, { label: string; emoji: string; order: num
   frontend: { label: "フロント向けガイド", emoji: "👤", order: 2 },
   workflow: { label: "マーケ向けガイド", emoji: "💡", order: 3 },
   admin: { label: "管理者向けガイド", emoji: "🛠️", order: 4 },
-  faq: { label: "FAQ", emoji: "❓", order: 5 },
+  updates: { label: "アップデート情報", emoji: "🆕", order: 5 },
+  faq: { label: "FAQ", emoji: "❓", order: 6 },
 };
 
 export function getSidebar(): SidebarCategory[] {
