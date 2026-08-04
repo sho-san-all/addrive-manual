@@ -11,6 +11,12 @@ export interface ArticleMeta {
   updated?: string;
   description?: string;
   slug?: string;
+  /**
+   * true の場合、生成バッチが未投入のプレースホルダページとして扱う。
+   * 一覧・カテゴリページ・サイドバーからは除外するが、個別ページ自体は
+   * ビルド対象として残す（直接URLでのアクセスは許容する）。
+   */
+  draft?: boolean;
 }
 
 export interface ArticleFile {
@@ -46,7 +52,8 @@ export function getArticlesByCategory(
         data.updated = (data.updated as Date).toISOString().split("T")[0];
       }
       return { ...(data as ArticleMeta), slug };
-    });
+    })
+    .filter((article) => article.draft !== true);
 }
 
 export function getArticleFile(
@@ -80,6 +87,8 @@ export function getAllArticles(): (ArticleMeta & {
   );
 }
 
+// 注意: draft:true のページも意図的に含める（一覧からは隠すが、個別ページ
+// 自体はビルドしてURLでアクセス可能な状態を維持するため）。
 export function generateAllStaticParams() {
   return getAllCategories().flatMap((category) => {
     const categoryDir = path.join(CONTENT_DIR, category);
