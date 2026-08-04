@@ -24,6 +24,7 @@ const CATEGORY_CONFIG: Record<string, { label: string; emoji: string; order: num
   report: { label: "レポートを出す", emoji: "📄", order: 3 },
   help: { label: "困ったとき・小ワザ", emoji: "❓", order: 4 },
   updates: { label: "アップデート情報", emoji: "🆕", order: 5 },
+  qa: { label: "みんなの質問ログ", emoji: "💬", order: 6 },
 };
 
 export function getSidebar(): SidebarCategory[] {
