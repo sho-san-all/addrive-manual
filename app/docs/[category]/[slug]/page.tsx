@@ -34,7 +34,12 @@ export async function generateMetadata({ params }: Props) {
   const { category, slug } = await params;
   const article = getArticleFile(category, slug);
   if (!article) return {};
-  return { title: article.meta.title };
+  const isDraft = article.meta.draft === true;
+  return {
+    title: article.meta.title,
+    // draft（生成バッチ未投入のプレースホルダ）は検索エンジン・全文検索から隠す
+    ...(isDraft ? { robots: { index: false, follow: false } } : {}),
+  };
 }
 
 export default async function ArticlePage({ params }: Props) {
@@ -44,6 +49,7 @@ export default async function ArticlePage({ params }: Props) {
 
   const toc = extractToc(article.rawContent);
   const { meta } = article;
+  const isDraft = meta.draft === true;
 
   return (
     <div className="flex">
@@ -51,7 +57,8 @@ export default async function ArticlePage({ params }: Props) {
       <div className="flex-1 min-w-0 xl:mr-56">
         <article
           className="max-w-3xl mx-auto px-6 py-10"
-          data-pagefind-body
+          data-pagefind-body={isDraft ? undefined : true}
+          data-pagefind-ignore={isDraft ? true : undefined}
         >
           {/* Breadcrumb */}
           <nav
