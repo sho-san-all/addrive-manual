@@ -12,8 +12,12 @@
 
 設計原典: docs/2026-08-04_WebツールチャットボットQ&Aセクション_構造設計.md（3-3節・6章・7章②）
 - botランタイム（Railway）には組み込まない。あくまで独立スクリプト（GitHub Actions等から実行）。
-- G2相当チェック（顧客名・Slackメンション・社外URL・金額・電話番号・ファイル名）に
-  該当するエントリは掲載しない（載せてから直すのではなく、そもそも載せない）。
+- [2026-08-05 無効化] 当初はG2相当チェック（顧客名・Slackメンション・社外URL・金額・
+  電話番号・ファイル名）に該当するエントリを非掲載にする設計だったが、心さんの方針
+  （顧客名・金額・電話番号を含め全部公開してよい情報という明言）と矛盾すると判断し、
+  無効化した。現在は取得した全エントリをそのまま掲載する（`filter_entries` は除外を
+  行わず、全件を通過扱いにする）。`check_g2` 本体・関連の正規表現は将来また使う可能性
+  への配慮で残してあるが、呼び出し側では使用していない。
 - 通過したエントリのみで qa/log.mdx を毎回「全文置換」で生成する（追記ではない）。
 """
 from __future__ import annotations
@@ -77,7 +81,12 @@ def _resolve_default_output() -> pathlib.Path:
     return output_path
 
 # ────────────────────────────────────────────────────────────
-# G2相当チェック（設計書6章）: 1つでもヒットしたら掲載しない
+# G2相当チェック（設計書6章・[2026-08-05] 無効化済み）
+#
+# 以下の check_g2 と関連の正規表現定義は、当初「1つでもヒットしたら掲載しない」
+# 判定に使う想定だったが、心さんの方針（顧客名・金額・電話番号を含め全部公開して
+# よい情報という明言）により無効化した。`filter_entries` からは呼び出しておらず、
+# 現状は未使用の単体関数として温存しているのみ（将来また使う可能性への配慮）。
 # ────────────────────────────────────────────────────────────
 _SLACK_MENTION_RE = re.compile(
     r"<@[UW][A-Z0-9]+>"
@@ -235,16 +244,16 @@ def load_entries_from_api(api_url: str, token: str) -> list[dict]:
 def filter_entries(
     entries: list[dict], client_names: Optional[Iterable[str]] = None
 ) -> tuple[list[dict], list[dict]]:
-    """G2チェックを通過したエントリと、除外されたエントリ（理由付き）を返す。"""
-    names = list(client_names) if client_names else None
-    passed: list[dict] = []
+    """全エントリを掲載対象として返す（G2チェックは無効化済み）。
+
+    [2026-08-05] G2チェック（顧客名・金額・電話番号等の検出による非掲載）は
+    心さんの方針（該当情報を含め全部公開してよい）と矛盾するため無効化した。
+    シグネチャ・戻り値の形（passed, rejected のタプル）は呼び出し元への影響を
+    最小にするためそのまま残しているが、rejected は常に空リストになる。
+    `client_names` 引数もG2判定に使われないため実質無効（後方互換のためのみ残置）。
+    """
+    passed = list(entries)
     rejected: list[dict] = []
-    for e in entries:
-        result = check_g2(e.get("question", ""), e.get("answer", ""), names)
-        if result.passed:
-            passed.append(e)
-        else:
-            rejected.append({**e, "_g2_reasons": result.reasons})
     return passed, rejected
 
 
@@ -463,7 +472,11 @@ def main(argv: Optional[list[str]] = None) -> int:
     parser.add_argument(
         "--client-names",
         default=None,
-        help="顧客名マスタ（1行1名のテキストファイル、任意）。未指定時は正規表現ヒューリスティックのみで判定",
+        help=(
+            "顧客名マスタ（1行1名のテキストファイル、任意）。"
+            "[2026-08-05] G2チェック自体を無効化したため、このオプションは実質使われない"
+            "（読み込み検証は行うが、掲載可否には影響しない）"
+        ),
     )
     parser.add_argument(
         "--output",
