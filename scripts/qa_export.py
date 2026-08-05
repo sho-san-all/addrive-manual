@@ -23,6 +23,7 @@
 from __future__ import annotations
 
 import argparse
+import html
 import json
 import os
 import pathlib
@@ -269,12 +270,100 @@ def _format_date(created_at: str) -> str:
 
 _MDX_ESCAPE_CHARS = "{}<>"
 
+# Slack mrkdwn の特殊トークンを1回のスキャンで拾う。
+#   <@UXXXX> / <@WXXXX>          ... ユーザーメンション（本文からは除去する）
+#   <!subteam^ID|表示名>          ... ユーザーグループメンション（表示名優先）
+#   <!subteam^ID>                ... 表示名なし（名前解決はスコープ外。@グループへ縮退）
+#   <!here> <!channel> <!everyone> ... 特殊メンション
+#   <url|label>                  ... Slack リンク記法（ラベル付き）
+#   <url>                        ... Slack リンク記法（ラベルなし）
+# bot_handler.py 側で新規保存時に <@ID> は既に _strip_mention 済みだが、
+# qa_export は「保存済みの過去データ」も出力対象になるため、ここでも
+# 一通り面倒を見る（過去データにも同じ変換がかかることを担保する）。
+_MRKDWN_TOKEN_RE = re.compile(
+    r"<@[UW][A-Z0-9]+>"
+    r"|<!subteam\^[A-Z0-9]+(?:\|(?P<subteam_label>[^<>]*))?>"
+    r"|<!(?P<special>here|channel|everyone)>"
+    r"|<(?P<url>https?://[^\s<>|]+)(?:\|(?P<label>[^<>]*))?>"
+)
+
+
+_MD_LINK_LABEL_ESCAPE_CHARS = "[]()"
+
+
+def _escape_markdown_link_label(text: str) -> str:
+    """Markdown リンク `[label](url)` の label 内に `[` `]` `(` `)` が含まれると、
+    リンク構造がそこで終端したとパーサに誤解釈される（MD/MDXインジェクション）。
+    Slack はユーザーがリンクの表示テキストを自由に設定できるため、label に
+    これらの文字が入ってくることは実運用で起こりうる。表示上はそのままの文字に
+    見えるよう、label 側だけバックスラッシュエスケープする。
+    """
+    if not text:
+        return text
+    return "".join(f"\\{ch}" if ch in _MD_LINK_LABEL_ESCAPE_CHARS else ch for ch in text)
+
+
+def _convert_slack_mrkdwn(text: str) -> str:
+    """Slack 独自の mrkdwn 記法を Markdown / 読みやすいプレーンテキストへ変換する。
+
+    Slack から取得した生テキストには、Slack クライアント上でしか展開されない
+    記法（`<url|text>` のリンクや `<!subteam^ID>` のユーザーグループメンション等）が
+    そのまま残っている。MDX にそのまま流すと壊れた表示（`<!subteam^S...>` が
+    そのまま出る、`\\>` が付く等）になるため、_escape_mdx_text でエスケープする
+    *前に* ここで正規の Markdown / プレーンテキストへ変換しておく。
+
+    対応（Slack 公式 mrkdwn 仕様に準拠）:
+      - `<url|text>`            -> `[text](url)`
+      - `<url>`                 -> `[url](url)`
+      - `<!subteam^ID|表示名>`   -> `@表示名`
+      - `<!subteam^ID>`         -> `@グループ`（名前解決は今回のスコープ外。
+        壊れた記法をそのまま出さないことを優先したフォールバック）
+      - `<!here>` / `<!channel>` / `<!everyone>` -> `@here` / `@channel` / `@everyone`
+      - `<@ID>`                 -> 除去（bot_handler._strip_mention と同じ扱い）
+
+    リンク変換時は追加で以下を行う（reviewer指摘対応）:
+      - url/label 中の HTML エンティティ（`&amp;amp;` 等）を `html.unescape` でデコードする。
+        Slack の生テキストは `&` を含む URL をこの形でエスケープして送ってくることがあるため。
+      - label 中の `[` `]` `(` `)` はバックスラッシュエスケープする。
+        Slack はリンクの表示テキストをユーザーが自由に設定できるため、エスケープしないと
+        Markdown/MDX パーサがリンク構造を誤認する。
+    """
+    if not text:
+        return text
+
+    def _replace(m: re.Match) -> str:
+        whole = m.group(0)
+        if whole.startswith("<@"):
+            return ""
+        if whole.startswith("<!subteam"):
+            label = m.group("subteam_label")
+            return f"@{label}" if label else "@グループ"
+        if whole.startswith("<!"):
+            return f"@{m.group('special')}"
+        # リンク（<url|label> / <url>）
+        url = m.group("url")
+        label = m.group("label")
+        # Slack の生テキストは URL 中の `&` 等を HTML エンティティとして
+        # 二重にエスケープして送ってくることがある（例: `&` -> `&amp;amp;`）。
+        # デコードしないとクエリ文字列付き URL のリンクが壊れる。
+        url = html.unescape(url) if url else url
+        label = html.unescape(label) if label else label
+        label_text = _escape_markdown_link_label(label or url)
+        return f"[{label_text}]({url})"
+
+    return _MRKDWN_TOKEN_RE.sub(_replace, text)
+
 
 def _escape_mdx_text(text: str) -> str:
     """Slack 本文をそのまま MDX に挿入すると `{...}`（式）や `<...>`（JSX タグ）
     として解釈されてしまう（MDX インジェクション）。表示上はそのままの文字に
     見えるよう、MDX/JSX として意味を持ちうる記号だけをバックスラッシュ
     エスケープしてテキスト扱いに固定する。
+
+    呼び出し順序に注意: 生の Slack mrkdwn（`<url|text>` 等）は _convert_slack_mrkdwn
+    で先に変換してから、こちらで残りの `{}<>` をエスケープすること。逆順にすると
+    `<url|text>` の `<` `>` が先にエスケープされ、mrkdwn として解釈できなくなる
+    （末尾に `\\>` が残る等、壊れた表示になる）。
     """
     if not text:
         return text
@@ -282,8 +371,8 @@ def _escape_mdx_text(text: str) -> str:
 
 
 def _format_entry(entry: dict, index: int) -> str:
-    question = _escape_mdx_text((entry.get("question") or "").strip())
-    answer = _escape_mdx_text((entry.get("answer") or "").strip())
+    question = _escape_mdx_text(_convert_slack_mrkdwn((entry.get("question") or "").strip()))
+    answer = _escape_mdx_text(_convert_slack_mrkdwn((entry.get("answer") or "").strip()))
     permalink = entry.get("permalink") or ""
     date_str = _format_date(entry.get("created_at") or "")
 
