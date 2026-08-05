@@ -284,7 +284,7 @@ _MRKDWN_TOKEN_RE = re.compile(
     r"<@[UW][A-Z0-9]+>"
     r"|<!subteam\^[A-Z0-9]+(?:\|(?P<subteam_label>[^<>]*))?>"
     r"|<!(?P<special>here|channel|everyone)>"
-    r"|<(?P<url>https?://[^\s<>|]+)(?:\|(?P<label>[^<>]*))?>"
+    r"|<(?P<url>(?:https?://|mailto:)[^\s<>|]+)(?:\|(?P<label>[^<>]*))?>"
 )
 
 
