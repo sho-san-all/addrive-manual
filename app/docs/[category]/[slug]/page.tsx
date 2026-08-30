@@ -8,6 +8,7 @@ import TOC from "@/components/TOC";
 import { Callout } from "@/components/Callout";
 import { ZoomableImage } from "@/components/ZoomableImage";
 import { AnchorHeading } from "@/components/AnchorHeading";
+import { Aliases } from "@/components/Aliases";
 
 const mdxComponents = {
   Callout,
@@ -97,6 +98,9 @@ export default async function ArticlePage({ params }: Props) {
               }}
             />
           </div>
+
+          {/* 別名（現場語彙）— pagefind に載せるため article の内側に置く */}
+          <Aliases aliases={meta.aliases} />
 
           {/* Footer feedback */}
           <div

@@ -62,9 +62,26 @@ jobs:
           fi
 
       - name: Deploy to Vercel
+        id: deploy
         if: steps.diff.outputs.changed == 'true' && steps.token.outputs.present == 'true'
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: npx vercel deploy --prod --token="$VERCEL_TOKEN"
+
+      # デプロイ済みのマニュアルを bot 側のキャッシュへ反映させる。
+      # BACKEND_API_URL は faq_export のフル URL（scripts/qa_export.py が
+      # --api-url をそのまま urlopen する仕様）なので、末尾の /faq_export を
+      # /manual_refresh に差し替えて同じホスト・同じ prefix に揃える。
+      # 失敗したら workflow ごと落とす（無音故障を作らない）。
+      - name: Refresh bot manual cache
+        if: steps.diff.outputs.changed == 'true' && steps.token.outputs.present == 'true'
+        env:
+          BACKEND_API_URL: ${{ vars.BACKEND_API_URL }}
+          FAQ_EXPORT_TOKEN: ${{ secrets.FAQ_EXPORT_TOKEN }}
+        run: |
+          refresh_url="${BACKEND_API_URL%/faq_export}/manual_refresh"
+          curl --fail --silent --show-error \
+            -X POST "$refresh_url" \
+            -H "Authorization: Bearer $FAQ_EXPORT_TOKEN"
