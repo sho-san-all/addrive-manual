@@ -3,8 +3,13 @@
 import { useState } from "react";
 import SearchModal from "./SearchModal";
 import { SearchIcon } from "./Icons";
+import type { ScreenLink } from "@/lib/screens";
 
-export default function HeroSearchTrigger() {
+export default function HeroSearchTrigger({
+  screens = [],
+}: {
+  screens?: ScreenLink[];
+}) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -19,7 +24,7 @@ export default function HeroSearchTrigger() {
           例：バナーが反映されない／担当者名が出てこない
         </span>
       </button>
-      <SearchModal open={open} onClose={() => setOpen(false)} />
+      <SearchModal open={open} onClose={() => setOpen(false)} screens={screens} />
     </>
   );
 }

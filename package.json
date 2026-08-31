@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build && npx pagefind --site out && node -e \"const fs=require('fs');fs.rmSync('public/pagefind',{recursive:true,force:true});fs.cpSync('out/pagefind','public/pagefind',{recursive:true});console.log('Copied pagefind to public/pagefind');\" && next build",
+    "build": "next build && node -e \"const fs=require('fs');fs.rmSync('out/pagefind',{recursive:true,force:true});console.log('Cleaned out/pagefind (stale fragments)');\" && npx pagefind --site out && node -e \"const fs=require('fs');fs.rmSync('public/pagefind',{recursive:true,force:true});fs.cpSync('out/pagefind','public/pagefind',{recursive:true});console.log('Copied pagefind to public/pagefind');\" && next build",
     "start": "next start"
   },
   "dependencies": {
