@@ -1,7 +1,12 @@
 import Link from "next/link";
 import { getAllArticles } from "@/lib/content";
 import { getSidebar } from "@/lib/sidebar";
-import { getQaEntries, getRecentQaEntries, QA_LOG_HREF } from "@/lib/qa";
+import {
+  getQaThreads,
+  getRecentQaThreads,
+  qaHrefForPermalink,
+  QA_LOG_HREF,
+} from "@/lib/qa";
 import { SCREENS } from "@/lib/screens";
 import { SLACK_CHANNEL_URL, SLACK_CHANNEL_NAME } from "@/lib/links";
 import CategoryCard from "@/components/CategoryCard";
@@ -18,6 +23,14 @@ import { ArrowRightIcon, SlackIcon } from "@/components/Icons";
  * 答えが記事側に無く質問ログにしかない場合は `qa: true` を付けて行き先を明示する。
  * 記事が増えたら見直す（自動生成ではない）。
  */
+/**
+ * 「Metaのバナーが反映されない」の答えがあるSlackスレッド。
+ * permalink をキーに lib/qa.ts が個別アンカー（/docs/qa/log/#qa-xxxxxxxx）を引く。
+ * スレッドが消えた場合は質問ログのトップにフォールバックする（リンク切れにしない）。
+ */
+const META_BANNER_THREAD_PERMALINK =
+  "https://sho-san.slack.com/archives/C096FLQ19NU/p1787632475175339?thread_ts=1787566683.530409&cid=C096FLQ19NU";
+
 const FREQUENT_QUESTIONS: { label: string; href: string; qa?: boolean }[] = [
   // help/data-issues の記事タイトルそのもの
   { label: "数値が出ない・合わない", href: "/docs/help/data-issues/" },
@@ -31,10 +44,10 @@ const FREQUENT_QUESTIONS: { label: string; href: string; qa?: boolean }[] = [
     label: "クライアントビューが見れない・先方に共有したい",
     href: "/docs/start/login/",
   },
-  // 答えは記事側になく、質問ログ Q1（広告管理シートの二重登録）にしかない
+  // 答えは記事側になく、質問ログのスレッド（広告管理シートの二重登録）にしかない
   {
     label: "Metaのバナーが反映されない",
-    href: QA_LOG_HREF,
+    href: qaHrefForPermalink(META_BANNER_THREAD_PERMALINK),
     qa: true,
   },
 ];
@@ -54,8 +67,8 @@ export default function HomePage() {
   const totalArticles = getAllArticles().filter(
     (a) => a.category !== "qa"
   ).length;
-  const qaEntries = getRecentQaEntries(3);
-  const qaTotal = getQaEntries().length;
+  const qaEntries = getRecentQaThreads(3);
+  const qaTotal = getQaThreads().length;
 
   const cards = CARD_CATEGORIES.map((slug) =>
     sidebar.find((c) => c.slug === slug)
@@ -77,7 +90,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <HeroSearchTrigger />
+          <HeroSearchTrigger screens={SCREENS} />
 
           <div className="flex flex-col gap-2.5">
             <p className="text-xs font-bold tracking-[0.1em] text-faint">
@@ -166,17 +179,17 @@ export default function HomePage() {
               </div>
               <ul className="rounded-xl border border-line overflow-hidden">
                 {qaEntries.map((entry, i) => (
-                  // permalink が唯一の安定ID（Q番号は新着で繰り上がる）
+                  // id は thread_ts 由来の安定ID（Q番号は新着で繰り上がる）
                   <li
-                    key={entry.permalink || entry.plainQuestion}
+                    key={entry.id}
                     className={i > 0 ? "border-t border-line-soft" : ""}
                   >
                     <Link
-                      href={QA_LOG_HREF}
+                      href={entry.href}
                       className="flex items-center gap-3 px-4 py-3.5 hover:bg-surface transition-colors"
                     >
                       <span className="flex-1 min-w-0 text-[14.5px] leading-relaxed text-ink-2 line-clamp-2">
-                        {entry.plainQuestion}
+                        {entry.title}
                       </span>
                       {entry.date && (
                         <span className="shrink-0 text-[12.5px] text-faint">

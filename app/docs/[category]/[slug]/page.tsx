@@ -9,7 +9,7 @@ import {
   getArticleFile,
 } from "@/lib/content";
 import { getCategoryConfig } from "@/lib/sidebar";
-import { findRelatedQaEntries } from "@/lib/qa";
+import { findRelatedQaThreads } from "@/lib/qa";
 import { SLACK_CHANNEL_URL, SLACK_CHANNEL_NAME } from "@/lib/links";
 import { extractToc } from "@/lib/toc";
 import TOC, { TOCCollapsible } from "@/components/TOC";
@@ -17,6 +17,7 @@ import { Callout } from "@/components/Callout";
 import { ZoomableImage } from "@/components/ZoomableImage";
 import { AnchorHeading } from "@/components/AnchorHeading";
 import SolvesBox from "@/components/SolvesBox";
+import QaLogView from "@/components/QaLogView";
 import StillStuck from "@/components/StillStuck";
 import ArticleNav from "@/components/ArticleNav";
 
@@ -58,8 +59,15 @@ export default async function ArticlePage({ params }: Props) {
   const article = getArticleFile(category, slug);
   if (!article) notFound();
 
-  const toc = extractToc(article.rawContent);
   const { meta } = article;
+  /**
+   * 質問ログだけは MDX 素通しではなく専用ビューで描画する。
+   * ここで分岐する（app/docs/qa/log/page.tsx のような別ルートは作らない）。
+   * 別ルートを切ると generateStaticParams の出力パスと衝突して静的エクスポートが壊れる。
+   */
+  const isQaLog = category === "qa" && slug === "log";
+  // 質問ログはQごとの <details> になるので、記事用の見出しTOCは出さない
+  const toc = isQaLog ? [] : extractToc(article.rawContent);
   const isDraft = meta.draft === true;
   const categoryConfig = getCategoryConfig(category);
   const { prev, next } = getAdjacentArticles(category, slug);
@@ -69,7 +77,7 @@ export default async function ArticlePage({ params }: Props) {
   const relatedQa =
     category === "qa"
       ? []
-      : findRelatedQaEntries([...(meta.aliases ?? []), meta.title], 3);
+      : findRelatedQaThreads([...(meta.aliases ?? []), meta.title], 3);
 
   return (
     <div className="flex">
@@ -115,29 +123,36 @@ export default async function ArticlePage({ params }: Props) {
           {/* モバイル用の折り畳み目次（xl以上は右カラム固定） */}
           <TOCCollapsible items={toc} />
 
-          {/* MDX content */}
-          <div className="prose prose-gray max-w-none article-prose">
-            <MDXRemote
-              source={article.rawContent}
-              components={mdxComponents}
-              options={{
-                mdxOptions: {
-                  remarkPlugins: [remarkGfm],
-                  rehypePlugins: [rehypeSlug],
-                },
-              }}
-            />
-          </div>
+          {/* 本文 */}
+          {isQaLog ? (
+            <QaLogView updated={meta.updated} />
+          ) : (
+            <div className="prose prose-gray max-w-none article-prose">
+              <MDXRemote
+                source={article.rawContent}
+                components={mdxComponents}
+                options={{
+                  mdxOptions: {
+                    remarkPlugins: [remarkGfm],
+                    rehypePlugins: [rehypeSlug],
+                  },
+                }}
+              />
+            </div>
+          )}
 
-          {/* それでも解決しないときは（関連質問ログ＋Slack導線） */}
-          <StillStuck entries={relatedQa} />
+          {/* それでも解決しないときは（関連質問ログ＋Slack導線）。
+              質問ログページ自体には QaLogView 側に同じ導線があるので出さない。 */}
+          {!isQaLog && <StillStuck entries={relatedQa} />}
 
           {/*
             旧: 👍👎 のフィードバックボタン。
             静的サイトで送信先が無く押せない飾りだったため、Slack導線に置き換えた。
           */}
           <div
-            className="mt-6 pt-5 border-t border-line-soft flex flex-col sm:flex-row sm:items-center gap-3"
+            className={`mt-6 pt-5 border-t border-line-soft flex flex-col sm:flex-row sm:items-center gap-3 ${
+              isQaLog ? "hidden" : ""
+            }`}
             data-pagefind-ignore
           >
             <span className="flex-1 text-[13.5px] text-muted">

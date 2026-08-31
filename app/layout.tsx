@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import { getSidebar } from "@/lib/sidebar";
+import { SCREENS } from "@/lib/screens";
 
 // 本文フォント。日本語も Noto Sans JP で表示する方針。
 // - `subsets` は指定しない。Noto Sans JP は Google Fonts 側が unicode-range で
@@ -49,7 +50,7 @@ export default function RootLayout({
     <html lang="ja" className={`h-full ${notoSansJP.variable}`}>
       {/* pt-[60px] / top-[60px] = 60px。globals.css の --header-height と対。 */}
       <body className="h-full bg-white">
-        <Header categories={categories} />
+        <Header categories={categories} screens={SCREENS} />
         <div className="flex pt-[60px]">
           {/* Left sidebar (lg以上。lg未満は Header 内の MobileNav ドロワー) */}
           <aside className="hidden lg:block fixed left-0 top-[60px] bottom-0 w-64 border-r border-line-soft bg-surface-2 overflow-y-auto sidebar-scroll z-30">

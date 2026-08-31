@@ -1,14 +1,14 @@
 import Link from "next/link";
 import { SlackIcon } from "./Icons";
 import { SLACK_CHANNEL_URL, SLACK_CHANNEL_NAME } from "@/lib/links";
-import { QA_LOG_HREF, type QaEntry } from "@/lib/qa";
+import { QA_LOG_HREF, type QaThread } from "@/lib/qa";
 
 /**
  * 記事末尾の「それでも解決しないときは」。
  * 関連する質問ログ（記事の aliases と質問文の単純なキーワード一致）と Slack 導線を出す。
  * 関連0件なら Slack 導線だけを出す。
  */
-export default function StillStuck({ entries }: { entries: QaEntry[] }) {
+export default function StillStuck({ entries }: { entries: QaThread[] }) {
   return (
     <section
       className="mt-12 rounded-xl border border-line px-5 py-5 sm:px-6"
@@ -23,14 +23,14 @@ export default function StillStuck({ entries }: { entries: QaEntry[] }) {
           </p>
           <ul className="flex flex-col gap-2">
             {entries.map((entry) => (
-              // permalink が唯一の安定ID（Q番号は新着で繰り上がるので使わない）
-              <li key={entry.permalink || entry.plainQuestion}>
+              // id は thread_ts 由来の安定ID（Q番号は新着で繰り上がるので使わない）
+              <li key={entry.id}>
                 <Link
-                  href={QA_LOG_HREF}
+                  href={entry.href}
                   className="flex items-center gap-3 rounded-[9px] border border-line-soft px-3.5 py-2.5 hover:border-brand-line hover:bg-surface transition-colors"
                 >
                   <span className="flex-1 min-w-0 text-sm leading-relaxed text-ink-2 line-clamp-2">
-                    {entry.plainQuestion}
+                    {entry.title}
                   </span>
                   {entry.date && (
                     <span className="shrink-0 text-xs text-faint">

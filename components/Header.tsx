@@ -6,12 +6,16 @@ import SearchModal from "./SearchModal";
 import MobileNav from "./MobileNav";
 import { SearchIcon, SlackIcon, MenuIcon } from "./Icons";
 import type { SidebarCategory } from "@/lib/sidebar";
+import type { ScreenLink } from "@/lib/screens";
 import { SLACK_CHANNEL_URL } from "@/lib/links";
 
 export default function Header({
   categories = [],
+  screens = [],
 }: {
   categories?: SidebarCategory[];
+  /** 検索の「画面」グループ用。サーバー（app/layout.tsx）から流してくる */
+  screens?: ScreenLink[];
 }) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [navOpen, setNavOpen] = useState(false);
@@ -96,7 +100,11 @@ export default function Header({
         onClose={() => setNavOpen(false)}
         categories={categories}
       />
-      <SearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
+      <SearchModal
+        open={searchOpen}
+        onClose={() => setSearchOpen(false)}
+        screens={screens}
+      />
     </>
   );
 }
