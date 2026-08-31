@@ -62,7 +62,6 @@ jobs:
           fi
 
       - name: Deploy to Vercel
-        id: deploy
         if: steps.diff.outputs.changed == 'true' && steps.token.outputs.present == 'true'
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
@@ -71,17 +70,39 @@ jobs:
         run: npx vercel deploy --prod --token="$VERCEL_TOKEN"
 
       # デプロイ済みのマニュアルを bot 側のキャッシュへ反映させる。
+      #
+      # ⚠️ デプロイ順序の制約: このステップが叩く POST /manual_refresh は
+      #    ad_expert_ai リポジトリ側のエンドポイント。**ad_expert_ai を先に
+      #    本番反映してから** この workflow の変更（＝addrive-manual 側）を
+      #    本番へ入れること。逆順にすると毎回 404 で workflow が落ちる。
+      #
       # BACKEND_API_URL は faq_export のフル URL（scripts/qa_export.py が
       # --api-url をそのまま urlopen する仕様）なので、末尾の /faq_export を
       # /manual_refresh に差し替えて同じホスト・同じ prefix に揃える。
+      #
+      # `changed` にぶら下げない（毎回叩く）。ぶら下げると、curl だけ失敗した回の
+      # 更新分が commit/push 済みのまま次回 changed=false でスキップされ、
+      # その内容が永久に bot へ届かなくなる。リフレッシュは冪等なので毎回でよい。
       # 失敗したら workflow ごと落とす（無音故障を作らない）。
       - name: Refresh bot manual cache
-        if: steps.diff.outputs.changed == 'true' && steps.token.outputs.present == 'true'
+        timeout-minutes: 8
         env:
           BACKEND_API_URL: ${{ vars.BACKEND_API_URL }}
           FAQ_EXPORT_TOKEN: ${{ secrets.FAQ_EXPORT_TOKEN }}
         run: |
+          set -euo pipefail
+          # 末尾スラッシュやクエリが付いていると ${VAR%/faq_export} は無言で
+          # 素通りし、存在しない URL を叩き続ける。置換前に形を検証して落とす。
+          case "$BACKEND_API_URL" in
+            */faq_export) ;;
+            *)
+              echo "::error::BACKEND_API_URL must end with '/faq_export' (got: '${BACKEND_API_URL}')"
+              exit 1
+              ;;
+          esac
           refresh_url="${BACKEND_API_URL%/faq_export}/manual_refresh"
           curl --fail --silent --show-error \
+            --connect-timeout 10 --max-time 120 \
+            --retry 3 --retry-connrefused --retry-max-time 300 \
             -X POST "$refresh_url" \
             -H "Authorization: Bearer $FAQ_EXPORT_TOKEN"

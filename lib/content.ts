@@ -26,6 +26,35 @@ export interface ArticleFile {
   rawContent: string;
 }
 
+/**
+ * frontmatter の `aliases` を正規化する。
+ *
+ * 型は `string[]` を期待しているが、frontmatter は人が手で書くので
+ * `aliases: 白イルカ`（YAML では文字列単体）のように書かれうる。素通しすると
+ * 描画側の `.join()` が TypeError になり `next build` ごと落ちる＝1ページの
+ * 書き間違いでサイト全体の更新が止まる。壊れていてもビルドは落とさず、
+ * その項目だけ無視する（警告はログに残す）。
+ */
+export function normalizeAliases(value: unknown): string[] | undefined {
+  if (value === undefined || value === null) return undefined;
+  if (!Array.isArray(value)) {
+    console.warn(
+      `[content] aliases must be a list of strings; ignoring value: ${JSON.stringify(value)}`
+    );
+    return undefined;
+  }
+  const cleaned = value
+    .filter((v): v is string => typeof v === "string")
+    .map((v) => v.trim())
+    .filter((v) => v.length > 0);
+  if (cleaned.length !== value.length) {
+    console.warn(
+      `[content] aliases contained non-string or empty entries; they were ignored: ${JSON.stringify(value)}`
+    );
+  }
+  return cleaned.length > 0 ? cleaned : undefined;
+}
+
 export function getAllCategories(): string[] {
   if (!fs.existsSync(CONTENT_DIR)) return [];
   return fs
@@ -51,7 +80,7 @@ export function getArticlesByCategory(
       if (data.updated instanceof Date) {
         data.updated = (data.updated as Date).toISOString().split("T")[0];
       }
-      return { ...(data as ArticleMeta), slug };
+      return { ...(data as ArticleMeta), aliases: normalizeAliases(data.aliases), slug };
     })
     .filter((article) => article.draft !== true);
 }
@@ -71,7 +100,7 @@ export function getArticleFile(
   }
 
   return {
-    meta: data as ArticleMeta,
+    meta: { ...(data as ArticleMeta), aliases: normalizeAliases(data.aliases) },
     slug,
     category,
     rawContent: content,
