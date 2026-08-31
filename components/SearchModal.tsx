@@ -91,9 +91,9 @@ export default function SearchModal({
         aria-hidden
       />
       <div className="relative w-full max-w-xl bg-white rounded-xl shadow-2xl overflow-hidden">
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-gray-100">
+        <div className="flex items-center gap-3 px-4 py-3 border-b border-line">
           <svg
-            className="w-5 h-5 text-gray-400 shrink-0"
+            className="w-5 h-5 text-faint shrink-0"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -111,11 +111,11 @@ export default function SearchModal({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="キーワードで検索..."
-            className="flex-1 outline-none text-gray-900 placeholder:text-gray-400"
+            className="flex-1 outline-none text-ink placeholder:text-faint"
           />
           <button
             onClick={onClose}
-            className="text-xs text-gray-400 border border-gray-200 rounded px-1.5 py-0.5 hover:bg-gray-50"
+            className="text-xs text-faint border border-line rounded px-1.5 py-0.5 hover:bg-surface"
           >
             ESC
           </button>
@@ -129,13 +129,13 @@ export default function SearchModal({
                   <Link
                     href={r.url}
                     onClick={onClose}
-                    className="block px-4 py-3 hover:bg-gray-50 border-b border-gray-50 last:border-0"
+                    className="block px-4 py-3 hover:bg-surface border-b border-line-soft last:border-0"
                   >
-                    <p className="text-sm font-medium text-gray-900">
+                    <p className="text-sm font-medium text-ink">
                       {r.meta.title}
                     </p>
                     <p
-                      className="text-xs text-gray-500 mt-0.5 line-clamp-2"
+                      className="text-xs text-faint mt-0.5 line-clamp-2"
                       dangerouslySetInnerHTML={{ __html: r.excerpt }}
                     />
                   </Link>
@@ -143,11 +143,11 @@ export default function SearchModal({
               ))}
             </ul>
           ) : query ? (
-            <p className="px-4 py-10 text-center text-sm text-gray-400">
+            <p className="px-4 py-10 text-center text-sm text-faint">
               「{query}」の結果が見つかりませんでした
             </p>
           ) : (
-            <p className="px-4 py-10 text-center text-sm text-gray-400">
+            <p className="px-4 py-10 text-center text-sm text-faint">
               キーワードを入力してください
             </p>
           )}

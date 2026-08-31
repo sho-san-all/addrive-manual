@@ -1,8 +1,27 @@
 import type { Metadata } from "next";
+import { Noto_Sans_JP } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import { getSidebar } from "@/lib/sidebar";
+
+// 本文フォント。日本語も Noto Sans JP で表示する方針。
+// - `subsets` は指定しない。Noto Sans JP は Google Fonts 側が unicode-range で
+//   124個の woff2 に分割配信しており、latin だけに絞ることはできない（指定しても
+//   日本語グリフを含む全ファイルが同梱される）。実態に合わせて指定を外してある。
+// - ビルド成果物に同梱される woff2 は 124 ファイル・約 5.0MB になるが、
+//   unicode-range 分割のおかげで、ブラウザが実際に落とすのは
+//   そのページで使う字を含むファイルだけ（全部は落ちない）。
+// - next/font はビルド時に Google Fonts へ取りに行き、フォントを self-host する
+//   （実行時に fonts.googleapis.com へは繋がない）。ビルド環境にネットワークが要る。
+// - fallback はフォント取得前・失敗時に効く。globals.css の --font-sans にも
+//   同じフォールバック列を書いてある。
+const notoSansJP = Noto_Sans_JP({
+  weight: ["400", "500", "700"],
+  variable: "--font-noto-sans-jp",
+  display: "swap",
+  fallback: ["Hiragino Sans", "Hiragino Kaku Gothic ProN", "system-ui"],
+});
 
 export const metadata: Metadata = {
   title: {
@@ -27,12 +46,13 @@ export default function RootLayout({
   const categories = getSidebar();
 
   return (
-    <html lang="ja" className="h-full">
+    <html lang="ja" className={`h-full ${notoSansJP.variable}`}>
+      {/* pt-[60px] / top-[60px] = 60px。globals.css の --header-height と対。 */}
       <body className="h-full bg-white">
-        <Header />
-        <div className="flex pt-14">
-          {/* Left sidebar */}
-          <aside className="hidden lg:block fixed left-0 top-14 bottom-0 w-64 border-r border-gray-200 overflow-y-auto sidebar-scroll z-30 bg-white">
+        <Header categories={categories} />
+        <div className="flex pt-[60px]">
+          {/* Left sidebar (lg以上。lg未満は Header 内の MobileNav ドロワー) */}
+          <aside className="hidden lg:block fixed left-0 top-[60px] bottom-0 w-64 border-r border-line-soft bg-surface-2 overflow-y-auto sidebar-scroll z-30">
             <Sidebar categories={categories} />
           </aside>
 
