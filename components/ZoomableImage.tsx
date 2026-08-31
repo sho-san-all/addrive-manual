@@ -33,7 +33,7 @@ export function ZoomableImage({ src, alt = "" }: Props) {
         src={src}
         alt={alt}
         onClick={() => setOpen(true)}
-        className="cursor-zoom-in rounded-lg border border-gray-200 hover:opacity-90 transition-opacity"
+        className="cursor-zoom-in rounded-[10px] border border-line hover:opacity-90 transition-opacity"
       />
 
       {open && (
@@ -51,7 +51,7 @@ export function ZoomableImage({ src, alt = "" }: Props) {
               setOpen(false);
             }}
             aria-label="閉じる"
-            className="absolute top-4 right-4 w-9 h-9 flex items-center justify-center rounded-full bg-white/90 text-gray-700 hover:bg-white shadow"
+            className="absolute top-4 right-4 w-9 h-9 flex items-center justify-center rounded-full bg-white/90 text-ink hover:bg-white shadow"
           >
             <svg
               className="w-5 h-5"

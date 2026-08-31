@@ -2,34 +2,23 @@
 
 import { useState } from "react";
 import SearchModal from "./SearchModal";
+import { SearchIcon } from "./Icons";
 
 export default function HeroSearchTrigger() {
   const [open, setOpen] = useState(false);
 
   return (
     <>
-      <div className="flex justify-center">
-        <button
-          type="button"
-          onClick={() => setOpen(true)}
-          className="inline-flex items-center gap-3 px-6 py-3 text-gray-400 bg-gray-100 rounded-xl text-sm w-full max-w-md cursor-pointer hover:bg-gray-200 transition-colors"
-        >
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
-          </svg>
-          <span className="flex-1 text-left">キーワードで検索... (⌘K)</span>
-        </button>
-      </div>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="flex items-center gap-3 w-full min-h-[54px] px-4 sm:px-5 rounded-xl border-[1.5px] border-brand bg-white text-left cursor-pointer hover:bg-brand-wash-2 transition-colors"
+      >
+        <SearchIcon size={20} className="text-brand shrink-0" />
+        <span className="flex-1 text-[14.5px] sm:text-[15.5px] text-faint truncate">
+          例：バナーが反映されない／担当者名が出てこない
+        </span>
+      </button>
       <SearchModal open={open} onClose={() => setOpen(false)} />
     </>
   );
