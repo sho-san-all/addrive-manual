@@ -73,6 +73,8 @@ export const CATEGORY_CONFIG: Record<string, CategoryConfig> = {
     order: 5,
     // 新しいものを上に出す
     articleOrder: [
+      "2026-09-01-report-submit-button-updates",
+      "2026-08-27-report-share-link-updates",
       "2026-08-05-campaign-view-updates",
       "2026-07-17-report-updates",
     ],
