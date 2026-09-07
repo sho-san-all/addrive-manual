@@ -4,18 +4,60 @@
 :root {
   --sidebar-width: 256px;
   --toc-width: 224px;
-  --header-height: 56px;
+  /* ヘッダー高さ。Tailwind 側は任意値で書いてあるので、変更するときは
+     以下も同じ px に揃えること:
+       app/layout.tsx            … pt-[60px] / top-[60px]
+       components/Header.tsx     … h-[60px]
+       components/MobileNav.tsx  … h-[60px]
+       app/docs/[category]/[slug]/page.tsx … 右TOC の top-[60px]
+       components/TOC.tsx        … IntersectionObserver の rootMargin "-60px ..." */
+  --header-height: 60px;
+}
+
+/* ブランドトークン。indigo は全廃し teal（本体 AdDrive と同色）に統一している。
+   ここで定義した色は Tailwind のユーティリティ（bg-brand / text-ink / border-line 等）
+   として生成される。 */
+@theme {
+  --color-brand: #2f8599;
+  --color-brand-deep: #1a4956;
+  --color-brand-wash: #e6f2f4;
+  --color-brand-wash-2: #f4fafa;
+  --color-brand-line: #c3d9dd;
+
+  --color-ink: #14232b;
+  --color-ink-2: #33424b;
+  --color-soft: #4a5a64;
+  --color-muted: #5a6b74;
+  --color-faint: #8a99a2;
+
+  --color-line: #e4e8ea;
+  --color-line-soft: #eef1f2;
+  --color-line-strong: #d6dcdf;
+
+  --color-surface: #f7fafa;
+  --color-surface-2: #fbfcfc;
+  --color-chip: #f2f5f6;
+
+  --color-alarm: #b4423c;
+  --color-alarm-wash: #fdf6f5;
+  --color-warn: #9a7b2f;
+  --color-warn-wash: #fbf7ea;
 }
 
 @theme inline {
-  --font-sans: ui-sans-serif, system-ui, -apple-system, sans-serif;
+  /* --font-noto-sans-jp は app/layout.tsx の next/font/google が注入する */
+  --font-sans: var(--font-noto-sans-jp), "Hiragino Sans", "Hiragino Kaku Gothic ProN",
+    system-ui, -apple-system, sans-serif;
   --font-mono: ui-monospace, "SFMono-Regular", "Menlo", monospace;
 }
 
 body {
   background: #fff;
-  color: #111827;
+  color: var(--color-ink);
   font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.95;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* Sidebar scrollbar */
@@ -26,7 +68,7 @@ body {
   background: transparent;
 }
 .sidebar-scroll::-webkit-scrollbar-thumb {
-  background: #e5e7eb;
+  background: var(--color-line);
   border-radius: 2px;
 }
 
@@ -37,22 +79,47 @@ body {
 
 /* Active nav item */
 .nav-active {
-  background-color: #f3f4f6;
-  color: #111827;
-  font-weight: 500;
+  background-color: var(--color-brand-wash);
+  color: #14343d;
+  font-weight: 700;
 }
 
 /* Prose overrides for article content */
 .article-prose {
-  --tw-prose-body: #374151;
-  --tw-prose-headings: #111827;
-  --tw-prose-code: #6d28d9;
-  --tw-prose-pre-bg: #1e293b;
+  --tw-prose-body: var(--color-ink-2);
+  --tw-prose-headings: var(--color-ink);
+  --tw-prose-bold: var(--color-ink);
+  --tw-prose-links: var(--color-brand);
+  --tw-prose-code: var(--color-brand-deep);
+  --tw-prose-quotes: var(--color-soft);
+  --tw-prose-quote-borders: var(--color-brand-line);
+  --tw-prose-bullets: var(--color-faint);
+  --tw-prose-counters: var(--color-faint);
+  --tw-prose-hr: var(--color-line);
+  --tw-prose-th-borders: var(--color-line);
+  --tw-prose-td-borders: var(--color-line-soft);
+  --tw-prose-captions: var(--color-faint);
+  --tw-prose-pre-bg: #1e2c33;
+  font-size: 16px;
+  line-height: 1.95;
 }
 
 .article-prose h2 {
+  font-weight: 700;
   scroll-margin-top: calc(var(--header-height) + 24px);
 }
 .article-prose h3 {
+  font-weight: 700;
   scroll-margin-top: calc(var(--header-height) + 24px);
+}
+.article-prose a {
+  text-decoration: none;
+  border-bottom: 1px solid #b8dee6;
+}
+.article-prose a:hover {
+  color: var(--color-brand-deep);
+  border-bottom-color: var(--color-brand);
+}
+.article-prose thead th {
+  background: var(--color-surface);
 }

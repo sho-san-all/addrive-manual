@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
+import { sortByArticleOrder } from "./sidebar";
 
 const CONTENT_DIR = path.join(process.cwd(), "content");
 
@@ -11,6 +12,11 @@ export interface ArticleMeta {
   updated?: string;
   description?: string;
   slug?: string;
+  /**
+   * このページで解決すること（症状ベースの箇条書き）。
+   * 記事冒頭の SolvesBox に出す。未設定の記事ではボックスごと出さない。
+   */
+  solves?: string[];
   /**
    * true の場合、生成バッチが未投入のプレースホルダページとして扱う。
    * 一覧・カテゴリページ・サイドバーからは除外するが、個別ページ自体は
@@ -41,7 +47,7 @@ export function getArticlesByCategory(
   const categoryDir = path.join(CONTENT_DIR, category);
   if (!fs.existsSync(categoryDir)) return [];
 
-  return fs
+  const articles = fs
     .readdirSync(categoryDir)
     .filter((file) => file.endsWith(".mdx"))
     .map((file) => {
@@ -54,6 +60,31 @@ export function getArticlesByCategory(
       return { ...(data as ArticleMeta), slug };
     })
     .filter((article) => article.draft !== true);
+
+  // 並び順は lib/sidebar.ts の CATEGORY_CONFIG.articleOrder が正。
+  // サイドバー・カテゴリ一覧・前後ナビで順序が食い違わないようにするため、
+  // 記事順が要るところは必ずここを通す。
+  return sortByArticleOrder(category, articles, (a) => a.slug);
+}
+
+/**
+ * 同一カテゴリ内での前後の記事を返す（順序は CATEGORY_CONFIG.articleOrder）。
+ * draft の記事は getArticlesByCategory の時点で除外済みなので前後にも出ない。
+ */
+export function getAdjacentArticles(
+  category: string,
+  slug: string
+): {
+  prev: (ArticleMeta & { slug: string }) | null;
+  next: (ArticleMeta & { slug: string }) | null;
+} {
+  const articles = getArticlesByCategory(category);
+  const index = articles.findIndex((a) => a.slug === slug);
+  if (index === -1) return { prev: null, next: null };
+  return {
+    prev: index > 0 ? articles[index - 1] : null,
+    next: index < articles.length - 1 ? articles[index + 1] : null,
+  };
 }
 
 export function getArticleFile(

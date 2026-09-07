@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { CheckIcon, LinkIcon } from "./Icons";
 
 /**
  * 大見出し（h2）用のカスタムコンポーネント。
@@ -40,14 +41,15 @@ export function AnchorHeading({
           href={`#${id}`}
           onClick={handleClick}
           aria-label="この見出しへのリンクをコピー"
-          className="ml-2 inline-flex select-none align-middle text-indigo-400 no-underline opacity-0 transition-opacity hover:text-indigo-600 focus:opacity-100 group-hover:opacity-100"
+          className="ml-2 inline-flex select-none align-middle text-brand/50 no-underline !border-b-0 opacity-0 transition-opacity hover:text-brand focus:opacity-100 group-hover:opacity-100"
         >
           {copied ? (
-            <span className="text-xs font-normal text-indigo-600">
-              ✓ コピーしました
+            <span className="inline-flex items-center gap-1 text-xs font-normal text-brand">
+              <CheckIcon size={13} />
+              コピーしました
             </span>
           ) : (
-            <span aria-hidden="true">#</span>
+            <LinkIcon size={16} />
           )}
         </a>
       )}
